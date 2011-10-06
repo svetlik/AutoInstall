@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data; //bez
-using System.Linq; //?
-using System.Text; //?
 
 using System.Windows.Automation;
 
@@ -16,7 +13,7 @@ namespace Svetlik
             AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpen);
             Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, AutomationElement.RootElement, TreeScope.Descendants, eventHandler);
 
-            //System.Diagnostics.Process.Start(args[0]);//non-blocking
+            System.Diagnostics.Process.Start("C:/Install/NetAdvantage_WinForms_20111_JP.msi");//non-blocking
 
             Console.WriteLine("Press any key to stop automating...");
             Console.ReadLine();//blocking - dokato ne se sluchi neshto ne vrysha rezultat
