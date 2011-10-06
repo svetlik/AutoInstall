@@ -8,8 +8,14 @@ namespace Svetlik
 {
     class UIAutomation
     {
+        private static string step;
+        private static string windowTitle;
+
         static void Main(string[] args)
         {
+            windowTitle = "Infragistics NetAdvantage Windows Forms 2011.1";
+            step = "start";
+
             AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpen);
             Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, AutomationElement.RootElement, TreeScope.Descendants, eventHandler);
 
@@ -22,21 +28,46 @@ namespace Svetlik
         private static void OnWindowOpen(object src, AutomationEventArgs e)
         {
             AutomationElement sourceElement;
+            string windowName;
             try
             {
                 sourceElement = src as AutomationElement;
+                windowName = sourceElement.GetCurrentPropertyValue(AutomationElement.NameProperty) as string;
             }
             catch (ElementNotAvailableException)
             {
                 return;
             }
 
-            string windowName = sourceElement.GetCurrentPropertyValue(AutomationElement.NameProperty) as string;
             Console.WriteLine("Window opened: " + windowName);
 
-            if (windowName == "Infragistics NetAdvantage Windows Forms 2011.1")
+            if (windowName == windowTitle)
             {
                 Automate();
+            }
+        }
+
+        private static bool ButtonClick(AutomationElement inElement, string automationId)
+        {
+            PropertyCondition btnCondition = new PropertyCondition(AutomationElement.AutomationIdProperty, automationId);
+
+            Console.WriteLine("Searching for the {0} button...", automationId);
+            AutomationElement btn = inElement.FindFirst(TreeScope.Descendants, btnCondition);
+            if (btn != null)
+            {
+                Console.WriteLine("OK.");
+
+                InvokePattern clickCommand = btn.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
+                Console.WriteLine("Clicking the {0} button", automationId);
+                clickCommand.Invoke();
+
+                Console.WriteLine("OK.");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Error");
+                return false;
             }
         }
 
@@ -49,33 +80,30 @@ namespace Svetlik
             {
                 Console.WriteLine("OK.");
 
-                Condition condition = new PropertyCondition(AutomationElement.NameProperty, "Infragistics NetAdvantage Windows Forms 2011.1");
+                Condition condition = new PropertyCondition(AutomationElement.NameProperty, windowTitle);
 
-                Console.WriteLine("Searching for Infragistics NetAdvantage Windows Forms 2011.1 Window...");
+                Console.WriteLine("Searching for {0} Window...", windowTitle);
                 AutomationElement appElement = rootElement.FindFirst(TreeScope.Children, condition);
 
                 if (appElement != null)
                 {
                     Console.WriteLine("OK.");
-
-                    Condition btnTsugiCondition = new PropertyCondition(AutomationElement.NameProperty, "次へ(N) >");
-
-                    Console.WriteLine("Searching for the TsugiHe(N) > button...");
-                    AutomationElement btnTsugi = appElement.FindFirst(TreeScope.Descendants, btnTsugiCondition);
-                    if (btnTsugi != null)
+                    string buttonToClick = "512";
+                    switch (step)
                     {
-                        Console.WriteLine("OK.");
+                        case "start":
+                            step = "licence";
+                            break;
 
-                        InvokePattern btnTsugiPattern = btnTsugi.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
-                        Console.WriteLine("Clicking the TsugiHe(N) > button");
-                        btnTsugiPattern.Invoke();
+                        case "licence":
+                            ButtonClick(appElement, "604");
+                            System.Threading.Thread.Sleep(1000);
+                            step = "optionalInstall";
+                            break;
 
-                        Console.WriteLine("OK.");
                     }
-                    else
-                    {
-                        Console.WriteLine("Error");
-                    }
+
+                    ButtonClick(appElement, buttonToClick);
                 }
                 else
                 {
