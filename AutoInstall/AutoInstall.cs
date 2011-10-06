@@ -47,21 +47,31 @@ namespace Svetlik
             }
         }
 
+       
         private static bool ButtonClick(AutomationElement inElement, string automationId)
         {
             PropertyCondition btnCondition = new PropertyCondition(AutomationElement.AutomationIdProperty, automationId);
 
             Console.WriteLine("Searching for the {0} button...", automationId);
-            AutomationElement btn = inElement.FindFirst(TreeScope.Descendants, btnCondition);
-            if (btn != null)
+            AutomationElement control = inElement.FindFirst(TreeScope.Descendants, btnCondition);
+            if (control != null)
             {
                 Console.WriteLine("OK.");
-
-                InvokePattern clickCommand = btn.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
                 Console.WriteLine("Clicking the {0} button", automationId);
-                clickCommand.Invoke();
 
+                object controlType = control.GetCurrentPropertyValue(AutomationElement.ControlTypeProperty);
+                if (controlType == ControlType.Button)
+                {
+                    InvokePattern clickCommand = control.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
+                    clickCommand.Invoke();
+                }
+                else if (controlType == ControlType.RadioButton)
+                {
+                    SelectionItemPattern radioCheck = control.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
+                    radioCheck.Select(); 
+                }
                 Console.WriteLine("OK.");
+
                 return true;
             }
             else
@@ -99,6 +109,12 @@ namespace Svetlik
                             ButtonClick(appElement, "604");
                             System.Threading.Thread.Sleep(1000);
                             step = "optionalInstall";
+                            break;
+
+                        case "optionalInstall":
+                            ButtonClick(appElement, "604");
+                            System.Threading.Thread.Sleep(1000);
+                            step = "userDetails";
                             break;
 
                     }
