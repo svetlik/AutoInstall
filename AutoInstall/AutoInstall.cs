@@ -16,13 +16,11 @@ namespace Svetlik
             windowTitle = "Infragistics NetAdvantage Windows Forms 2011.1";
             step = "start";
 
-            System.Diagnostics.Process.Start("C:/Install/NetAdvantage_WinForms_20111_JP.msi");
-
             AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpen);
             Automation.AddAutomationEventHandler(
                 WindowPattern.WindowOpenedEvent, AutomationElement.RootElement, TreeScope.Descendants, eventHandler);
 
-            
+            System.Diagnostics.Process.Start("C:/Install/NetAdvantage_WinForms_20111_JP.msi");
 
             //Console.WriteLine("Press any key to stop automating...");
             Console.ReadLine();
@@ -116,46 +114,41 @@ namespace Svetlik
 
                         case "license":
                             ButtonClick(appElement, "604");
-                            System.Threading.Thread.Sleep(2000);
                             step = "optionalInstall";
                             break;
 
                         case "optionalInstall":
                             ButtonClick(appElement, "602");
-                            System.Threading.Thread.Sleep(2000);
                             step = "userDetails";
                             break;
 
                         case "userDetails":
                             ButtonClick(appElement, "512");
-                            System.Threading.Thread.Sleep(2000);
                             step = "installFolder";
                             break;
 
                         case "installFolder":
                             ButtonClick(appElement, "512");
-                            System.Threading.Thread.Sleep(2000);
                             step = "installType";
                             break;
 
                         case "installType":
                             ButtonClick(appElement, "578");
-                            System.Threading.Thread.Sleep(2000);
                             step = "installFinally";
                             break;
 
                         case "installFinally":
                             ButtonClick(appElement, "596");
-                            System.Threading.Thread.Sleep(2000);
                             step = "finishInstall";
                             break;
 
                         case "finishInstall":
-                            ButtonClick(appElement, "734");
-                            System.Threading.Thread.Sleep(2000);
-                            step = "final";
+                            step = "finishFinally";
                             break;
 
+                        case "finishFinally":
+                            buttonToClick = "734";
+                            break;
                     }
 
                     ButtonClick(appElement, buttonToClick);
