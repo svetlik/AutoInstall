@@ -11,7 +11,7 @@ namespace Svetlik
         private static string windowTitle;
         private static string[][] steps; 
 
-        static void Main()
+        static void Main(string[] args)
         {
             windowTitle = "Infragistics NetAdvantage Windows Forms 2011.1";
             string nextButton = "512";
@@ -33,7 +33,12 @@ namespace Svetlik
             Automation.AddAutomationEventHandler(
                 WindowPattern.WindowOpenedEvent, AutomationElement.RootElement, TreeScope.Descendants, eventHandler);
 
-            System.Diagnostics.Process.Start("C:/Install/NetAdvantage_WinForms_20111_JP.msi");
+            if (args.Length != 1)
+            {
+                Console.WriteLine("Please pass as a first argument the path to the installer to automate.");
+                System.Environment.Exit(1);
+            }
+            System.Diagnostics.Process.Start(args[0]);
 
             Console.ReadLine();
         }
