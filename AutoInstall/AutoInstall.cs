@@ -11,18 +11,21 @@ namespace Svetlik
         private static string step;
         private static string windowTitle;
 
-        static void Main(string[] args)
+        static void Main()
         {
             windowTitle = "Infragistics NetAdvantage Windows Forms 2011.1";
             step = "start";
 
+            System.Diagnostics.Process.Start("C:/Install/NetAdvantage_WinForms_20111_JP.msi");
+
             AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpen);
-            Automation.AddAutomationEventHandler(WindowPattern.WindowOpenedEvent, AutomationElement.RootElement, TreeScope.Descendants, eventHandler);
+            Automation.AddAutomationEventHandler(
+                WindowPattern.WindowOpenedEvent, AutomationElement.RootElement, TreeScope.Descendants, eventHandler);
 
-            System.Diagnostics.Process.Start("C:/Install/NetAdvantage_WinForms_20111_JP.msi");//non-blocking
+            
 
-            Console.WriteLine("Press any key to stop automating...");
-            Console.ReadLine();//blocking - dokato ne se sluchi neshto ne vrysha rezultat
+            //Console.WriteLine("Press any key to stop automating...");
+            Console.ReadLine();
         }
 
         private static void OnWindowOpen(object src, AutomationEventArgs e)
@@ -51,7 +54,7 @@ namespace Svetlik
         private static bool ButtonClick(AutomationElement inElement, string automationId)
         {
             PropertyCondition btnCondition = new PropertyCondition(AutomationElement.AutomationIdProperty, automationId);
-
+            
             Console.WriteLine("Searching for the {0} button...", automationId);
             AutomationElement control = inElement.FindFirst(TreeScope.Descendants, btnCondition);
             if (control != null)
@@ -70,6 +73,7 @@ namespace Svetlik
                     SelectionItemPattern radioCheck = control.GetCurrentPattern(SelectionItemPattern.Pattern) as SelectionItemPattern;
                     radioCheck.Select(); 
                 }
+                System.Threading.Thread.Sleep(2000);
                 Console.WriteLine("OK.");
 
                 return true;
@@ -99,22 +103,57 @@ namespace Svetlik
                 {
                     Console.WriteLine("OK.");
                     string buttonToClick = "512";
+
                     switch (step)
                     {
                         case "start":
-                            step = "licence";
+                            step = "begin";
                             break;
 
-                        case "licence":
+                        case "begin":
+                            step = "license";
+                            break;
+
+                        case "license":
                             ButtonClick(appElement, "604");
-                            System.Threading.Thread.Sleep(1000);
+                            System.Threading.Thread.Sleep(2000);
                             step = "optionalInstall";
                             break;
 
                         case "optionalInstall":
-                            ButtonClick(appElement, "604");
-                            System.Threading.Thread.Sleep(1000);
+                            ButtonClick(appElement, "602");
+                            System.Threading.Thread.Sleep(2000);
                             step = "userDetails";
+                            break;
+
+                        case "userDetails":
+                            ButtonClick(appElement, "512");
+                            System.Threading.Thread.Sleep(2000);
+                            step = "installFolder";
+                            break;
+
+                        case "installFolder":
+                            ButtonClick(appElement, "512");
+                            System.Threading.Thread.Sleep(2000);
+                            step = "installType";
+                            break;
+
+                        case "installType":
+                            ButtonClick(appElement, "578");
+                            System.Threading.Thread.Sleep(2000);
+                            step = "installFinally";
+                            break;
+
+                        case "installFinally":
+                            ButtonClick(appElement, "596");
+                            System.Threading.Thread.Sleep(2000);
+                            step = "finishInstall";
+                            break;
+
+                        case "finishInstall":
+                            ButtonClick(appElement, "734");
+                            System.Threading.Thread.Sleep(2000);
+                            step = "final";
                             break;
 
                     }
