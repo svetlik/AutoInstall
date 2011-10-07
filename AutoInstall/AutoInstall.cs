@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-
 using System.Windows.Automation;
 
 namespace Svetlik
@@ -10,13 +9,12 @@ namespace Svetlik
     {
         private static int step;
         private static string windowTitle;
-        private static string[][] steps;
-        
-        static void Main()
-        {   
-            windowTitle = "Infragistics NetAdvantage Windows Forms 2011.1";
+        private static string[][] steps; 
 
-            string nextButton = "512"; 
+        static void Main()
+        {
+            windowTitle = "Infragistics NetAdvantage Windows Forms 2011.1";
+            string nextButton = "512";
             steps = new string[][]
             {
                 new string[] {nextButton}, // start
@@ -119,7 +117,15 @@ namespace Svetlik
                         }
                     }
                     step++;
-                    Console.WriteLine("Moving to step {0}.", step);
+                    if (step == 8)
+                    {
+                        Console.WriteLine("Last step. Operation finished successfully.");
+                        System.Environment.Exit(0);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Moving to step {0}.", step);
+                    }
                 }
                 else
                 {
