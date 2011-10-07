@@ -1,2 +1,9 @@
-AutoInstall/bin/*
+AutoInstall/bin/Debug/*
+AutoInstall/bin/Release/AutoInstall.vshost.exe
+AutoInstall/bin/Release/AutoInstall.vshost.exe.manifest
+AutoInstall/bin/Release/AutoInstall.exe.*
+AutoInstall/bin/Release/AutoInstall.pdb
+AutoInstall/bin/Release/AutoInstall.application
+AutoInstall/AutoInstall_TemporaryKey.pfx
+
 AutoInstall/obj/*
