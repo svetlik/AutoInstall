@@ -8,13 +8,28 @@ namespace Svetlik
 {
     class UIAutomation
     {
-        private static string step;
+        private static int step;
         private static string windowTitle;
-
+        private static string[][] steps;
+        
         static void Main()
-        {
+        {   
             windowTitle = "Infragistics NetAdvantage Windows Forms 2011.1";
-            step = "start";
+
+            string nextButton = "512"; 
+            steps = new string[][]
+            {
+                new string[] {nextButton}, // start
+                new string[] {"604", nextButton}, // license
+                new string[] {"602", nextButton}, // optionalInstall
+                new string[] {nextButton}, // userDetails
+                new string[] {nextButton}, // installFolder
+                new string[] {"578"}, // installType
+                new string[] {"596"}, // installFinally
+                new string[] {"734"}, // finishFinally
+            };
+
+            step = 0;
 
             AutomationEventHandler eventHandler = new AutomationEventHandler(OnWindowOpen);
             Automation.AddAutomationEventHandler(
@@ -22,7 +37,6 @@ namespace Svetlik
 
             System.Diagnostics.Process.Start("C:/Install/NetAdvantage_WinForms_20111_JP.msi");
 
-            //Console.WriteLine("Press any key to stop automating...");
             Console.ReadLine();
         }
 
@@ -57,7 +71,6 @@ namespace Svetlik
             AutomationElement control = inElement.FindFirst(TreeScope.Descendants, btnCondition);
             if (control != null)
             {
-                Console.WriteLine("OK.");
                 Console.WriteLine("Clicking the {0} button", automationId);
 
                 object controlType = control.GetCurrentPropertyValue(AutomationElement.ControlTypeProperty);
@@ -72,13 +85,13 @@ namespace Svetlik
                     radioCheck.Select(); 
                 }
                 System.Threading.Thread.Sleep(2000);
-                Console.WriteLine("OK.");
+                Console.WriteLine("Button {0} clicked.", automationId);
 
                 return true;
             }
             else
             {
-                Console.WriteLine("Error");
+                Console.WriteLine("Could not find button {0} ", automationId);
                 return false;
             }
         }
@@ -90,8 +103,6 @@ namespace Svetlik
 
             if (rootElement != null)
             {
-                Console.WriteLine("OK.");
-
                 Condition condition = new PropertyCondition(AutomationElement.NameProperty, windowTitle);
 
                 Console.WriteLine("Searching for {0} Window...", windowTitle);
@@ -99,68 +110,25 @@ namespace Svetlik
 
                 if (appElement != null)
                 {
-                    Console.WriteLine("OK.");
-                    string buttonToClick = "512";
-
-                    switch (step)
+                    foreach (string buttonId in steps[step])
                     {
-                        case "start":
-                            step = "begin";
-                            break;
-
-                        case "begin":
-                            step = "license";
-                            break;
-
-                        case "license":
-                            ButtonClick(appElement, "604");
-                            step = "optionalInstall";
-                            break;
-
-                        case "optionalInstall":
-                            ButtonClick(appElement, "602");
-                            step = "userDetails";
-                            break;
-
-                        case "userDetails":
-                            ButtonClick(appElement, "512");
-                            step = "installFolder";
-                            break;
-
-                        case "installFolder":
-                            ButtonClick(appElement, "512");
-                            step = "installType";
-                            break;
-
-                        case "installType":
-                            ButtonClick(appElement, "578");
-                            step = "installFinally";
-                            break;
-
-                        case "installFinally":
-                            ButtonClick(appElement, "596");
-                            step = "finishInstall";
-                            break;
-
-                        case "finishInstall":
-                            step = "finishFinally";
-                            break;
-
-                        case "finishFinally":
-                            buttonToClick = "734";
-                            break;
+                        if (!ButtonClick(appElement, buttonId))
+                        {
+                            Console.WriteLine("Could not find button.");
+                            return;
+                        }
                     }
-
-                    ButtonClick(appElement, buttonToClick);
+                    step++;
+                    Console.WriteLine("Moving to step {0}.", step);
                 }
                 else
                 {
-                    Console.WriteLine("Error");
+                    Console.WriteLine("Could not find the Installer Window.");
                 }
             }
             else
             {
-                Console.WriteLine("Error");
+                Console.WriteLine("Could not get the RootElement.");
             }
         }
     }
